@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Spin & Win | Exclusive Reward</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --card-bg: #0a0a0a;
+      --border: #222;
+      --primary: #25D366;
+      --accent: #FFD700;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --glow-green: rgba(37, 211, 102, 0.4);
+      --glow-yellow: rgba(255, 215, 0, 0.3);
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+      15% { opacity: 0.6; }
+      85% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 20px 80px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: center;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: lowercase;
+      font-weight: 700;
+    }
+    .logo-tapmad { 
+      color: #fff; 
+      text-shadow: 0 0 10px rgba(255,255,255,0.3);
+      letter-spacing: 3px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px;
+      text-transform: lowercase;
+    }
+
+    h1 {
+      font-size: clamp(28px, 7vw, 40px);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, #fff 40%, var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px var(--glow-yellow);
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+    h2 {
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+    .sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 85%;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .engagement {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #ccc;
+      background: rgba(255,255,255,0.04);
+      padding: 8px 14px;
+      border-radius: 30px;
+      border: 1px solid #1a1a1a;
+    }
+    .engagement span { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .live-dot { width: 6px; height: 6px; background: #25D366; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; margin-right: 2px; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+
+    .wheel-wrapper {
+      position: relative;
+      width: 330px;
+      height: 330px;
+      margin-bottom: 20px;
+    }
+    canvas#wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 5.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      box-shadow: 0 0 35px rgba(255,215,0,0.15), 0 0 60px rgba(0,0,0,0.8);
+    }
+    .center-icon {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 52px; height: 52px;
+      background: #000;
+      border: 2px solid #333;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      z-index: 5;
+      box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(0,0,0,0.8);
+    }
+    .arrow-pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 20px solid #FFD700;
+      filter: drop-shadow(0 4px 8px rgba(255,215,0,0.6));
+      z-index: 6;
+    }
+
+    #spinBtn {
+      width: 100%;
+      max-width: 340px;
+      padding: 16px;
+      border: none;
+      border-radius: 50px;
+      background: var(--primary);
+      color: #000;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 0 20px var(--glow-green), inset 0 2px 0 rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+    #spinBtn:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); box-shadow: 0 0 35px var(--glow-green); } }
+
+    .sponsor {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0.95;
+      flex-wrap: wrap;
+      background: rgba(255,255,255,0.03);
+      padding: 10px 16px;
+      border-radius: 40px;
+      border: 1px solid #1a1a1a;
+    }
+    .sponsor-logo {
+      height: 26px;
+      object-fit: contain;
+      filter: brightness(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      transition: transform 0.2s;
+    }
+    .sponsor-logo:hover { transform: scale(1.05); }
+    .sponsor-separator {
+      width: 1px;
+      height: 20px;
+      background: #333;
+      margin: 0 2px;
+    }
+    .brand-tag {
+      background: rgba(255,255,255,0.08);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 11px;
+      color: #ddd;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .brand-tag.hd {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+      font-weight: 800;
+    }
+
+    #comments-section {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .section-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .comment-card {
+      background: var(--card-bg);
+      border: 1px solid #1a1a1a;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease-out forwards;
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    .comment-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333, #111);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #fff;
+      font-weight: 600;
+      border: 1px solid #333;
+    }
+    .comment-content { display: flex; flex-direction: column; text-align: left; }
+    .comment-name { color: #aaa; font-weight: 500; font-size: 12px; }
+    .comment-text { color: #eee; line-height: 1.3; margin-top: 2px; }
+    @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+
+    .comment-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      background: #0f0f0f;
+      border: 1px solid #252525;
+      border-radius: 50px;
+      padding: 6px;
+    }
+    #userComment {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      font-size: 13px;
+      outline: none;
+    }
+    #userComment::placeholder { color: #555; }
+    #postComment {
+      background: var(--primary);
+      color: #000;
+      border: none;
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #postComment:disabled { opacity: 0.5; cursor: default; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px 22px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.85);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal h3 { font-size: 21px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+    .modal p { font-size: 13px; color: #999; margin-bottom: 14px; line-height: 1.4; }
+    .modal-info {
+      background: #0d0d0d;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+      text-align: left;
+      font-size: 13px;
+      color: #bbb;
+      border: 1px solid #2a2a2a;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f1f1f;
+      padding-bottom: 8px;
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-label { color: #888; font-weight: 500; }
+    .info-value { color: #fff; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+    .modern-badge {
+      background: #1a2a1f;
+      color: #25D366;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .modal-sponsor {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .modal-sponsor img {
+      height: 22px;
+      object-fit: contain;
+      filter: brightness(1.1);
+    }
+
+    .btn-primary, .btn-yes, .btn-no, .btn-ok {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
+    .btn-yes { background: var(--primary); color: #000; }
+    .btn-no { background: #1a1a1a; color: #888; border: 1px solid #333; }
+    .btn-ok { background: #fff; color: #000; margin-top: 6px; }
+
+    .actions { display: flex; gap: 10px; margin-top: 8px; }
+    .actions button { flex: 1; }
+
+    .hidden { display: none !important; }
+    @media(max-width:360px) { .wheel-wrapper { width: 290px; height: 290px; } }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 200;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles"></div>
+  <canvas id="confetti-canvas"></canvas>
+
+  <header>
+    <span class="logo-tapmad">tapmad</span>
+  </header>
+
+  <div class="container">
+    <h1>CONGRATULATIONS!</h1>
+    <h2>Spin & Win!</h2>
+    <p class="sub">Spin the wheel to win <span style="color:var(--accent); font-weight:600;">₨100,000</span> Today!</p>
+
+    <div class="engagement">
+      <span><div class="live-dot"></div> <span class="likes-text">❤️ 1,200+</span></span>
+      <span>👁️ <span class="views-text">300,000+</span> Viewers</span>
+    </div>
+
+    <div class="wheel-wrapper">
+      <div class="arrow-pointer"></div>
+      <canvas id="wheel" width="340" height="340"></canvas>
+      <div class="center-icon">🎯</div>
+    </div>
+
+    <button id="spinBtn">TAP TO SPIN</button>
+
+    <div class="sponsor">
+      <span style="color:#aaa; font-size:11px;">Sponsored by</span>
+      <span style="font-weight:700; color:#e80000; font-size:12px;">JazzCash</span>
+      <img src="https://banner2.cleanpng.com/20180327/zdw/avjcarvs7.webp" alt="JazzCash" class="sponsor-logo" onerror="this.style.display='none';">
+      <span class="sponsor-separator"></span>
+      <span style="font-weight:700; color:#1a73e8; font-size:12px;">EasyPaisa</span>
+      <img src="https://icon2.cleanpng.com/lnd/20250110/er/acded9d6362d497965c18a071cb9fd.webp" alt="EasyPaisa" class="sponsor-logo" onerror="this.style.display='none';">
+      <span class="sponsor-separator"></span>
+      <span class="brand-tag hd">✨ HD AD FREE</span>
+    </div>
+
+    <div id="comments-section">
+      <div class="section-label"><span class="live-dot"></span> Recent Visitor Comments</div>
+      <div id="comments-list"></div>
+      <div class="comment-input-wrap">
+        <input type="text" id="userComment" placeholder="Leave your comment here..." maxlength="60" autocomplete="off">
+        <button id="postComment">POST</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="winModal" class="modal-overlay">
+    <div class="modal">
+      <h3>🎉 You Won ₨100,000!</h3>
+      <div class="modal-info">
+        <div class="info-row">
+          <span class="info-label">📱 Device</span>
+          <span class="info-value" id="userDevice">Detecting...</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">🌍 Location</span>
+          <span class="info-value">🇵🇰 Pakistan <span class="modern-badge">secure</span></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">🌐 Browser</span>
+          <span class="info-value" id="userBrowser">Modern Browser</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">✅ Status</span>
+          <span class="info-value" style="color:#25D366;">Verified Winner</span>
+        </div>
+      </div>
+      <button class="btn-primary" id="proceedBtn">Proceed to Claim</button>
+      <div class="actions">
+        <button class="btn-yes" id="yesBtn">YES</button>
+        <button class="btn-no" id="noBtn">NO</button>
+      </div>
+      <div class="modal-sponsor">
+        <span>Sponsored by</span>
+        <span style="font-weight:700; color:#e80000;">JazzCash</span>
+        <img src="https://banner2.cleanpng.com/20180327/zdw/avjcarvs7.webp" alt="JazzCash" style="height:20px;" onerror="this.style.display='none';">
+      </div>
+    </div>
+  </div>
+
+  <div id="secondModal" class="modal-overlay">
+    <div class="modal">
+      <h3>⏳ Almost There!</h3>
+      <p>Complete the last step to claim your reward securely. Don't miss out on ₨100,000!</p>
+      <button class="btn-ok" id="finalCtaBtn">OK, CONTINUE</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const CPA_LINK = "YOUR_CPA_LINK_HERE";
+      const canvas = document.getElementById('wheel');
+      const ctx = canvas.getContext('2d');
+      const spinBtn = document.getElementById('spinBtn');
+      const winModal = document.getElementById('winModal');
+      const secondModal = document.getElementById('secondModal');
+      const commentsList = document.getElementById('comments-list');
+      const confettiCanvas = document.getElementById('confetti-canvas');
+      const confettiCtx = confettiCanvas.getContext('2d');
+
+      let isSpinning = false;
+      let currentRotation = 0;
+      
+      const WHEEL_SEGMENTS = [
+        { label: "₨100,000", color: "#151515", accent: "#FFD700", icon: "💰" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌" },
+        { label: "₨70,000", color: "#151515", accent: "#25D366", icon: "💵" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌" },
+        { label: "₨50,000", color: "#151515", accent: "#E63946", icon: "💸" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌" }
+      ];
+      
+      const STATIC_COMMENTS = [
+        { name: "Ahmed R.", msg: "I received ₨100,000 😍", time: "2m ago" },
+        { name: "Fatima K.", msg: "JazzCash works fast! Instant transfer 🔥", time: "4m ago" },
+        { name: "Bilal A.", msg: "Just got paid. This is actually real!", time: "6m ago" },
+        { name: "Sana U.", msg: "Claimed mine already 💸 Thank you!", time: "9m ago" },
+        { name: "Hamza Z.", msg: "Wow, amazing 🙌 Highly recommended", time: "12m ago" },
+        { name: "Ayesha L.", msg: "Thought it was fake but got the money instantly", time: "15m ago" },
+        { name: "Omar F.", msg: "Tapmad campaigns are always legit 🚀", time: "18m ago" },
+        { name: "Zara N.", msg: "So happy right now! Best day ever ✨", time: "21m ago" },
+        { name: "Ali B.", msg: "Withdrawn to Easypaisa & JazzCash both worked", time: "25m ago" },
+        { name: "Maham S.", msg: "Shared with my group chat! All claimed ✅", time: "30m ago" }
+      ];
+
+      const PARTICLES_COUNT = 30;
+
+      function createParticles() {
+        const container = document.getElementById('particles');
+        for(let i=0; i<PARTICLES_COUNT; i++){
+          const p = document.createElement('div');
+          p.className = 'particle';
+          const size = Math.random() * 8 + 4;
+          p.style.width = `${size}px`; p.style.height = `${size}px`;
+          p.style.left = `${Math.random() * 100}%`;
+          p.style.background = Math.random() > 0.6 ? '#FFD700' : '#ffffff';
+          p.style.animationDuration = `${Math.random() * 12 + 8}s`;
+          p.style.animationDelay = `${Math.random() * 6}s`;
+          container.appendChild(p);
+        }
+      }
+      createParticles();
+
+      const SIZE = 340;
+      const RADIUS = SIZE / 2 - 10;
+      const CENTER = SIZE / 2;
+      const SEGMENT_COUNT = WHEEL_SEGMENTS.length;
+      const ARC = (2 * Math.PI) / SEGMENT_COUNT;
+
+      // Preload money emojis as images
+      const moneyIcons = {
+        '💰': null,
+        '💵': null,
+        '💸': null,
+        '❌': null
+      };
+
+      function drawWheel() {
+        ctx.clearRect(0, 0, SIZE, SIZE);
+        ctx.save();
+        ctx.translate(CENTER, CENTER);
+        ctx.rotate(-Math.PI / 2);
+        for(let i=0; i<SEGMENT_COUNT; i++){
+          const startAngle = i * ARC;
+          const endAngle = (i + 1) * ARC;
+          
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.arc(0, 0, RADIUS, startAngle, endAngle);
+          ctx.fillStyle = WHEEL_SEGMENTS[i].color;
+          ctx.fill();
+          ctx.strokeStyle = '#444';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          
+          ctx.save();
+          const midAngle = startAngle + ARC/2;
+          ctx.translate(Math.cos(midAngle) * (RADIUS * 0.65), Math.sin(midAngle) * (RADIUS * 0.65));
+          ctx.rotate(midAngle);
+          
+          // Draw currency icon
+          ctx.font = '22px -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(WHEEL_SEGMENTS[i].icon, 0, -12);
+          
+          // Draw label
+          ctx.fillStyle = WHEEL_SEGMENTS[i].accent;
+          ctx.font = 'bold 14px -apple-system, sans-serif';
+          ctx.fillText(WHEEL_SEGMENTS[i].label, 0, 12);
+          
+          ctx.restore();
+        }
+        ctx.restore();
+      }
+      drawWheel();
+
+      // ---- CONFETTI BURST ----
+      let confettiParticles = [];
+      let confettiAnimationId = null;
+      
+      function resizeConfetti() {
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resizeConfetti);
+      resizeConfetti();
+
+      function startConfetti() {
+        confettiParticles = [];
+        const colors = ['#FFD700', '#25D366', '#FF4500', '#1E90FF', '#FF69B4', '#FFF', '#FFD700', '#00FF00'];
+        for (let i = 0; i < 200; i++) {
+          confettiParticles.push({
+            x: Math.random() * confettiCanvas.width,
+            y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+            size: Math.random() * 8 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speedY: Math.random() * 5 + 4,
+            speedX: (Math.random() - 0.5) * 3,
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 12,
+            opacity: 1
+          });
+        }
+        
+        if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+        
+        function animateConfetti() {
+          confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+          let stillActive = false;
+          for (let p of confettiParticles) {
+            p.y += p.speedY;
+            p.x += p.speedX;
+            p.rotation += p.rotationSpeed;
+            p.opacity -= 0.003;
+            if (p.opacity <= 0) continue;
+            stillActive = true;
+            confettiCtx.save();
+            confettiCtx.translate(p.x, p.y);
+            confettiCtx.rotate((p.rotation * Math.PI) / 180);
+            confettiCtx.globalAlpha = p.opacity;
+            confettiCtx.fillStyle = p.color;
+            confettiCtx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+            confettiCtx.restore();
+          }
+          if (stillActive) {
+            confettiAnimationId = requestAnimationFrame(animateConfetti);
+          } else {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiAnimationId = null;
+          }
+        }
+        animateConfetti();
+      }
+
+      // ---- SPIN LOGIC ----
+      spinBtn.addEventListener('click', () => {
+        if(isSpinning) return;
+        isSpinning = true;
+        spinBtn.disabled = true;
+        spinBtn.textContent = "SPINNING...";
+
+        const spins = 5 + Math.floor(Math.random() * 2);
+        const randomOffset = (Math.random() * 20) - 10;
+        const targetRotation = (spins * 360) + randomOffset;
+        canvas.style.transform = `rotate(${currentRotation + targetRotation}deg)`;
+        currentRotation += targetRotation;
+
+        setTimeout(() => {
+          showWinPopup();
+          startConfetti(); // 🎉 confetti burst after wheel stops
+        }, 5600);
+      });
+
+      function detectDevice() {
+        const ua = navigator.userAgent;
+        if (/iPad|iPhone|iPod/.test(ua)) return 'Apple iPhone 16 Pro';
+        if (/Android/.test(ua)) return 'Samsung Galaxy S24 Ultra';
+        if (/Macintosh/.test(ua)) return 'MacBook Pro M3';
+        if (/Windows/.test(ua)) return 'Windows 11 PC';
+        return 'Premium Device';
+      }
+
+      function detectBrowser() {
+        const ua = navigator.userAgent;
+        if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome 130";
+        if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari 18";
+        if (ua.includes("Firefox")) return "Firefox 132";
+        if (ua.includes("Edg")) return "Edge 130";
+        return "Modern Browser";
+      }
+
+      function showWinPopup() {
+        document.getElementById('userDevice').textContent = detectDevice();
+        document.getElementById('userBrowser').textContent = detectBrowser();
+        winModal.style.display = 'flex';
+      }
+
+      document.getElementById('proceedBtn').addEventListener('click', () => window.location.href = CPA_LINK);
+      document.getElementById('yesBtn').addEventListener('click', () => window.location.href = CPA_LINK);
+      document.getElementById('noBtn').addEventListener('click', () => {
+        winModal.style.display = 'none';
+        setTimeout(() => secondModal.style.display = 'flex', 300);
+      });
+      document.getElementById('finalCtaBtn').addEventListener('click', () => window.location.href = CPA_LINK);
+
+      let likes = 1205;
+      let views = 300450;
+      const likesEl = document.querySelector('.likes-text');
+      const viewsEl = document.querySelector('.views-text');
+      setInterval(() => {
+        likes += Math.floor(Math.random() * 3) + 1;
+        likesEl.textContent = `❤️ ${likes.toLocaleString()}+`;
+      }, 1400);
+      setInterval(() => {
+        const change = Math.floor(Math.random() * 150) - 60;
+        views += change;
+        if(views < 295000) views = 295000;
+        viewsEl.textContent = `${views.toLocaleString()}+`;
+      }, 1800);
+
+      function renderComments() {
+        commentsList.innerHTML = '';
+        STATIC_COMMENTS.forEach((c, idx) => {
+          const card = document.createElement('div');
+          card.className = 'comment-card';
+          card.style.animationDelay = `${idx * 0.05}s`;
+          card.innerHTML = `
+            <div class="comment-avatar">${c.name.charAt(0)}</div>
+            <div class="comment-content">
+              <div class="comment-name">${c.name} <span style="color:#555; font-size:11px;">• ${c.time}</span></div>
+              <div class="comment-text">${c.msg}</div>
+            </div>
+          `;
+          commentsList.appendChild(card);
+        });
+      }
+      renderComments();
+
+      const commentInput = document.getElementById('userComment');
+      const postBtn = document.getElementById('postComment');
+      postBtn.addEventListener('click', () => {
+        const text = commentInput.value.trim();
+        if(!text) return;
+        const newComment = { name: "You", msg: text, time: "Just now" };
+        STATIC_COMMENTS.unshift(newComment);
+        const card = document.createElement('div');
+        card.className = 'comment-card';
+        card.style.border = "1px solid #25D366";
+        card.style.background = "#0d1a12";
+        card.innerHTML = `
+          <div class="comment-avatar" style="background:var(--primary); color:#000;">✓</div>
+          <div class="comment-content">
+            <div class="comment-name">${newComment.name} <span style="color:#25D366; font-size:11px;">• ${newComment.time}</span></div>
+            <div class="comment-text">${newComment.msg}</div>
+          </div>
+        `;
+        commentsList.insertBefore(card, commentsList.firstChild);
+        commentInput.value = '';
+        postBtn.disabled = true;
+        postBtn.textContent = "POSTED ✓";
+      });
+      commentInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') postBtn.click();
+      });
+    })();
+  </script>
+</body>
+</html>
