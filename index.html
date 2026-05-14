@@ -450,7 +450,7 @@
     <div class="sponsor">
       <span style="color:#aaa; font-size:11px;">Sponsored by</span>
       <span style="font-weight:700; color:#e80000; font-size:12px;">JazzCash</span>
-      <img src="https://banner2.cleanpng.com/20180327/zdw/avjcarvs7.webp" alt="JazzCash" class="sponsor-logo" onerror="this.style.display='none';">
+      <img src="https://banner2.cleanpng.com/lnd/20250110/pw/d0ad8bb55bc068ecf2058516429406.webp" alt="JazzCash" class="sponsor-logo" onerror="this.style.display='none';">
       <span class="sponsor-separator"></span>
       <span style="font-weight:700; color:#1a73e8; font-size:12px;">EasyPaisa</span>
       <img src="https://icon2.cleanpng.com/lnd/20250110/er/acded9d6362d497965c18a071cb9fd.webp" alt="EasyPaisa" class="sponsor-logo" onerror="this.style.display='none';">
@@ -571,14 +571,6 @@
       const SEGMENT_COUNT = WHEEL_SEGMENTS.length;
       const ARC = (2 * Math.PI) / SEGMENT_COUNT;
 
-      // Preload money emojis as images
-      const moneyIcons = {
-        '💰': null,
-        '💵': null,
-        '💸': null,
-        '❌': null
-      };
-
       function drawWheel() {
         ctx.clearRect(0, 0, SIZE, SIZE);
         ctx.save();
@@ -692,7 +684,7 @@
 
         setTimeout(() => {
           showWinPopup();
-          startConfetti(); // 🎉 confetti burst after wheel stops
+          startConfetti();
         }, 5600);
       });
 
