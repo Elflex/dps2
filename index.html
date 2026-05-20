@@ -507,7 +507,6 @@
 
   <div class="container">
     <h1>CONGRATULATIONS!</h1>
-    <h2>Your Phone Number Have Been Chosen!</h2>
     <h2>Spin & Win!</h2>
     <p class="sub">Spin the wheel to win 100,000 PKR <span style="color:var(--accent); font-weight:600;">₨100,000</span> Today!</p> <p class="sub">Thousands of Pakistanis are claiming their prize today — why miss out?</p>
    
@@ -753,7 +752,7 @@
             color: colors[Math.floor(Math.random() * colors.length)],
             speedY: Math.random() * 5 + 4,
             speedX: (Math.random() - 0.5) * 3,
-            rotation: Math.random() * 320,
+            rotation: Math.random() * 360,
             rotationSpeed: (Math.random() - 0.8) * 12,
             opacity: 1
           });
@@ -818,7 +817,7 @@
         spinBtn.textContent = "SPINNING...";
 
         const fullSpins = 5;
-        const baseOffset = 60;
+        const targetOffset = 300;
         const totalSpinDegrees = (fullSpins * 360) + baseOffset;
         const tinyJitter = (Math.random() * 1) - 5;
         const finalRotation = totalSpinDegrees + tinyJitter;
